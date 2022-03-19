@@ -1,0 +1,21 @@
+{
+  "name": "laocc/tencent",
+  "description": "for tencent apis",
+  "homepage": "https://github.com/laocc/tencent",
+  "authors": [
+    {
+      "name": "fazo",
+      "email": "fazo@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">7.1",
+    "ext-json": "*",
+    "qcloudsms/qcloudsms_php": ">0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "laocc\\tencent\\": "src/"
+    }
+  }
+}
