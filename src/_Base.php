@@ -7,7 +7,7 @@ use esp\core\Library;
 
 class _Base extends Library
 {
-    protected $conf;
+    protected array $conf;
 
     public function _init(array $option = [])
     {
