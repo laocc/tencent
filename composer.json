@@ -10,8 +10,7 @@
   ],
   "require": {
     "php": ">7.1",
-    "ext-json": "*",
-    "qcloudsms/qcloudsms_php": ">0.1"
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {

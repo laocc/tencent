@@ -2,7 +2,6 @@
 
 namespace laocc\tencent;
 
-use esp\http\Http;
 
 /**
  * 在腾讯云服务器执行命令，自动化服务
@@ -18,6 +17,9 @@ use esp\http\Http;
 class Tat extends _Base
 {
     protected string $product = 'tat';//当前产品名称，在各类中自行指定
+    protected string $domain = 'tat.tencentcloudapi.com';
+    protected string $version = '2020-10-28';
+    protected string $region = 'ap-shanghai';//默认地区
 
 
     /**
@@ -25,10 +27,6 @@ class Tat extends _Base
      */
     public function create(array $option)
     {
-        $params = [];
-        $params['Action'] = 'CreateCommand';
-        $params['Region'] = $option['region'] ?? 'ap-shanghai';
-
         $data = [];
         $data['CommandName'] = $option['name'];//命令名称
         $data['Content'] = base64_encode($option['command']);
@@ -38,19 +36,15 @@ class Tat extends _Base
         $data['Timeout'] = intval($option['timeout'] ?? 10);//秒
         $data['Username'] = 'root';
 
-        return $this->request($params, $data);
+        return $this->request('CreateCommand', $data);
     }
 
     public function delete(array $option)
     {
-        $params = [];
-        $params['Action'] = 'DeleteCommand';
-        $params['Region'] = $option['region'] ?? 'ap-shanghai';
-
         $data = [];
         $data['CommandId'] = $option['id'];
 
-        $send = $this->request($params, $data);
+        $send = $this->request('DeleteCommand', $data);
         if (is_string($send)) return $send;
         return true;
     }
@@ -60,16 +54,12 @@ class Tat extends _Base
      */
     public function run(array $option)
     {
-        $params = [];
-        $params['Action'] = 'InvokeCommand';
-        $params['Region'] = $option['region'] ?? 'ap-shanghai';
-
         $data = [];
         $data['CommandId'] = $option['cmd_id'];
         $data['InstanceIds'] = $option['serv_id'];
         if (is_string($data['InstanceIds'])) $data['InstanceIds'] = [$data['InstanceIds']];
 
-        $send = $this->request($params, $data);
+        $send = $this->request('InvokeCommand', $data);
         if (is_string($send)) return $send;
         return $send;
     }
@@ -80,10 +70,6 @@ class Tat extends _Base
      */
     public function exec(array $option)
     {
-        $params = [];
-        $params['Action'] = 'RunCommand';
-        $params['Region'] = $option['region'] ?? 'ap-shanghai';
-
         $data = [];
         $data['CommandName'] = $option['name'];//命令名称
         $data['Content'] = base64_encode($option['command']);
@@ -96,7 +82,7 @@ class Tat extends _Base
         $data['InstanceIds'] = $option['serv_id'];
         if (is_string($data['InstanceIds'])) $data['InstanceIds'] = [$data['InstanceIds']];
 
-        $send = $this->request($params, $data);
+        $send = $this->request('RunCommand', $data);
         if (is_string($send)) return $send;
         return $send;
     }
@@ -109,15 +95,11 @@ class Tat extends _Base
      */
     public function query(array $option)
     {
-        $params = [];
-        $params['Action'] = 'DescribeInvocations';
-        $params['Region'] = $option['region'] ?? 'ap-shanghai';
-
         $data = [];
         $data['InvocationIds'] = $option['run_id'];
         if (is_string($data['InvocationIds'])) $data['InvocationIds'] = [$data['InvocationIds']];
 
-        $send = $this->request($params, $data);
+        $send = $this->request('DescribeInvocations', $data);
         if (is_string($send)) return $send;
         return $send;
     }
@@ -137,29 +119,6 @@ class Tat extends _Base
 
     }
 
-    private function request(array $params, array $postData)
-    {
-        $json = json_encode($postData, 320);
-
-        $option = [];
-        $option['encode'] = 'json';
-        $option['decode'] = 'json';
-        $option['headers'] = [];
-        $option['headers']['Content-Type'] = 'application/json';
-        $option['headers']['Host'] = 'tat.tencentcloudapi.com';
-        $option['headers']['X-TC-Action'] = $params['Action'];
-        $option['headers']['X-TC-Region'] = $params['Region'] ?? 'ap-shanghai';
-        $option['headers']['X-TC-Version'] = '2020-10-28';
-        $option['headers']['X-TC-Timestamp'] = time();
-        $option['headers']['X-TC-Language'] = 'zh-CN';
-        $option['headers']['Authorization'] = $this->signature($option, $json);
-
-        $http = new Http($option);
-        $request = $http->data($json)->post('https://tat.tencentcloudapi.com/');
-        $response = $request->data('Response');
-        if ($err = ($response['Error'] ?? null)) return $err['Message'];
-        return $response;
-    }
 
 
 }
