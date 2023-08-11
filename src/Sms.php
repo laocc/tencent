@@ -6,6 +6,7 @@ use Qcloud\Sms\SmsSingleSender;
 
 class Sms extends _Base
 {
+    protected string $product = 'sms';//当前产品名称，在各类中自行指定
 
     public function send(string $mobile, array $conf)
     {
@@ -42,7 +43,7 @@ class Sms extends _Base
         return $this->_controller->_redis->del("message_{$mobile}");
     }
 
-    private function createSignCode(string $mobile, int $ttl = 15, int $len = 4)
+    private function createSignCode(string $mobile, int $ttl = 15, int $len = 4): int
     {
         $code = mt_rand(intval('1' . str_repeat('0', $len - 1)), intval(str_repeat('9', $len)));
         $this->_controller->_redis->set("message_{$mobile}", $code, $ttl * 60);
