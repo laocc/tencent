@@ -26,8 +26,8 @@ class Sms extends _Base
 
         $data = [];
         $data['PhoneNumberSet'] = [$conf['mobile']];
-        $data['SmsSdkAppId'] = $conf['sdk'] ?? '';//1400265064
-        $data['TemplateId'] = $conf['id'] ?? '';
+        $data['SmsSdkAppId'] = strval($conf['sdk'] ?? '');//1400265064
+        $data['TemplateId'] = strval($conf['id'] ?? '');
         $data['SignName'] = $conf['sign'] ?? '';
         $data['TemplateParamSet'] = [$code];
 

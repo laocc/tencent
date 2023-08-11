@@ -21,7 +21,7 @@ class _Base extends Library
     {
         $this->conf = $option;
         $this->keyID = ($option['id'] ?? ($option['appid'] ?? ''));
-        $this->secret = ($option['key'] ?? ($option['appkey'] ?? ''));
+        $this->secret = ($option['key'] ?? ($option['appkey'] ?? ($option['secret'] ?? '')));
     }
 
     public function setRegion(string $value): _Base
@@ -86,6 +86,8 @@ class _Base extends Library
         $signArr[1] = $option['headers']['X-TC-Timestamp'];
         $signArr[2] = "{$date}/{$this->product}/tc3_request";
         $signArr[3] = hash("SHA256", implode("\n", $reqs));
+        var_dump($this->keyID);
+        var_dump($this->secret);
 
         $sign = $this->signTC3($this->secret, $date, $this->product, implode("\n", $signArr));
 
