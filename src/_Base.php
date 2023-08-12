@@ -86,8 +86,6 @@ class _Base extends Library
         $signArr[1] = $option['headers']['X-TC-Timestamp'];
         $signArr[2] = "{$date}/{$this->product}/tc3_request";
         $signArr[3] = hash("SHA256", implode("\n", $reqs));
-        var_dump($this->keyID);
-        var_dump($this->secret);
 
         $sign = $this->signTC3($this->secret, $date, $this->product, implode("\n", $signArr));
 
