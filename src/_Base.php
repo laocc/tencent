@@ -49,6 +49,7 @@ class _Base extends Library
         $option = [];
         $option['encode'] = 'json';
         $option['decode'] = 'json';
+
         $option['headers'] = [];
         $option['headers']['Content-Type'] = 'application/json';
         $option['headers']['Host'] = $this->domain;
@@ -76,7 +77,7 @@ class _Base extends Library
         $reqs = [];
         $reqs[0] = 'POST';
         $reqs[1] = '/';//URI 参数，API 3.0 固定为正斜杠（/）。
-        $reqs[2] = '';//发起 HTTP 请求 URL 中的查询字符串，对于 POST 请求，固定为空字符串""，对于 GET 请求，则为 URL 中问号（?）后面的字符串内容，例如：Limit=10&Offset=0。
+        $reqs[2] = '';//对于 POST 请求，固定为空字符串""，对于 GET 请求，则为 URL 中问号（?）后面的字符串内容，例如：Limit=10&Offset=0。
         $reqs[3] = "content-type:{$option['headers']['Content-Type']}\nhost:{$option['headers']['Host']}\n";
         $reqs[4] = 'content-type;host';
         $reqs[5] = hash("SHA256", $json);

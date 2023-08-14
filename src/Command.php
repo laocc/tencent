@@ -14,7 +14,7 @@ namespace laocc\tencent;
  * 非腾讯云服务器，可以在腾讯云后台注册托管后，也可以用此脚本管理
  *
  */
-class Tat extends _Base
+class Command extends _Base
 {
     protected string $product = 'tat';//当前产品名称，在各类中自行指定
     protected string $domain = 'tat.tencentcloudapi.com';
@@ -36,7 +36,12 @@ class Tat extends _Base
         $data['Timeout'] = intval($option['timeout'] ?? 10);//秒
         $data['Username'] = 'root';
 
-        return $this->request('CreateCommand', $data);
+        $send = $this->request('CreateCommand', $data);
+        if (is_string($send)) return $send;
+
+        return [
+            'cmd_id' => $send['CommandId'],
+        ];
     }
 
     public function delete(array $option)
@@ -46,7 +51,10 @@ class Tat extends _Base
 
         $send = $this->request('DeleteCommand', $data);
         if (is_string($send)) return $send;
-        return true;
+
+        return [
+            'success' => true
+        ];
     }
 
     /**
@@ -61,7 +69,9 @@ class Tat extends _Base
 
         $send = $this->request('InvokeCommand', $data);
         if (is_string($send)) return $send;
-        return $send;
+        return [
+            'inv_id' => $send['InvocationId']
+        ];
     }
 
 
@@ -84,24 +94,44 @@ class Tat extends _Base
 
         $send = $this->request('RunCommand', $data);
         if (is_string($send)) return $send;
-        return $send;
+
+        return [
+            'cmd_id' => $send['CommandId'],
+            'inv_id' => $send['InvocationId'],
+        ];
     }
 
     /**
      * 查询命令执行结果
      *
      * @param array $option
-     * @return array|mixed|string|null
+     * @return array|string
      */
     public function query(array $option)
     {
+        if (!isset($option['inv_id'])) return '请指定任务ID inv_id';
         $data = [];
-        $data['InvocationIds'] = $option['run_id'];
-        if (is_string($data['InvocationIds'])) $data['InvocationIds'] = [$data['InvocationIds']];
+        $data['Filters'] = [['Name' => 'invocation-id', 'Values' => [$option['inv_id']]]];
+        $data['HideOutput'] = false;
 
-        $send = $this->request('DescribeInvocations', $data);
+        $send = $this->request('DescribeInvocationTasks', $data);
         if (is_string($send)) return $send;
-        return $send;
+
+        $result = $send['InvocationTaskSet'][0];
+        return [
+            'success' => (($result['TaskStatus'] ?? '') === 'SUCCESS'),
+            'status' => ($result['TaskStatus'] ?? ''),
+            'datetime' => date('Y-m-d H:i:s', strtotime($result['EndTime'] ?? '')),
+            'star' => strtotime($result['ExecStartTime'] ?? ''),
+            'end' => strtotime($result['EndTime'] ?? ''),
+            'used' => strtotime($result['EndTime'] ?? '') - strtotime($result['ExecStartTime'] ?? ''),
+            'result' => base64_decode($result['TaskResult']['Output'] ?? ''),
+            'result_url' => ($result['OutputUrl'] ?? ''),
+            'code' => ($result['ExitCode'] ?? ''),
+            'cmd_id' => ($result['CommandId'] ?? ''),
+            'inv_id' => ($result['InvocationId'] ?? ''),
+            'ins_id' => ($result['InstanceId'] ?? ''),
+        ];
     }
 
     public function edit()
@@ -118,7 +148,6 @@ class Tat extends _Base
     {
 
     }
-
 
 
 }
