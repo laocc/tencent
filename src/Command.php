@@ -2,7 +2,6 @@
 
 namespace laocc\tencent;
 
-
 /**
  * 在腾讯云服务器执行命令，自动化服务
  * 官网：https://cloud.tencent.com/product/tat
