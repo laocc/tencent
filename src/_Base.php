@@ -62,6 +62,7 @@ class _Base extends Library
 
         $http = new Http($option);
         $request = $http->data($json)->post("https://{$this->domain}/");
+        $this->debug([$request, $request->html()]);
         $response = $request->data('Response');
         if ($err = ($response['Error'] ?? null)) return $err['Message'];
         return $response;
