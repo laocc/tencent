@@ -45,6 +45,7 @@ abstract class _Base extends Library
     public function request(string $action, array $postData)
     {
         $json = json_encode($postData, 320);
+        if (empty($postData)) $json = '{}';
 
         $option = [];
         $option['encode'] = 'json';

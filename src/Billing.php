@@ -10,10 +10,15 @@ class Billing extends _Base
 
     public function balance()
     {
-        $data = [];
-        $send = $this->request('DescribeAccountBalance', $data);
+        $send = $this->request('DescribeAccountBalance', []);
         if (is_string($send)) return $send;
 
-        return $send;
+        return [
+            'account' => $send['Uin'],//账户ID
+            'balance' => $send['RealBalance'],//余额
+            'cache' => $send['CashAccountBalance'],//现金
+            'credit' => $send['RealCreditBalance'],//信用
+            'freeze' => $send['FreezeAmount'],//冻结
+        ];
     }
 }
