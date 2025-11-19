@@ -54,7 +54,7 @@ class _Base extends Library
         $option['headers']['Content-Type'] = 'application/json';
         $option['headers']['Host'] = $this->domain;
         $option['headers']['X-TC-Action'] = $action;
-        $option['headers']['X-TC-Region'] = $this->region;
+        if ($this->region) $option['headers']['X-TC-Region'] = $this->region;
         $option['headers']['X-TC-Version'] = $this->version;
         $option['headers']['X-TC-Timestamp'] = time();
         $option['headers']['X-TC-Language'] = 'zh-CN';
