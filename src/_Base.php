@@ -7,7 +7,7 @@ use esp\core\Library;
 use esp\http\Http;
 use function esp\core\esp_error;
 
-class _Base extends Library
+abstract class _Base extends Library
 {
     protected array $conf = [];
     protected string $keyID = '';
