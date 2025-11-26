@@ -8,7 +8,10 @@ class Billing extends _Base
     protected string $domain = 'billing.tencentcloudapi.com';
     protected string $version = '2018-07-09';
 
-    public function balance()
+    /**
+     * @return array|string
+     */
+    public function balance(): array|string
     {
         $send = $this->request('DescribeAccountBalance', []);
         if (is_string($send)) return $send;
